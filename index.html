@@ -4,41 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Saving</title>
-  <style>
-    /* CSS styles */
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
   <button id="saveButton">Save Data</button>
 
+  <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js"></script>
   <script>
-    // JavaScript code
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // Get a reference to the storage service
+    const storage = firebase.storage();
+
+    // Get a reference to the file
+    const fileRef = storage.ref().child('savedData.txt');
+
     document.getElementById('saveButton').addEventListener('click', () => {
       const dataToSave = 'Hello Vaibhav';
 
       // Create a Blob object with the data
       const blob = new Blob([dataToSave], { type: 'text/plain' });
 
-      // Create a link element
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-
-      // Set the filename
-      link.download = 'savedData.txt';
-
-      // Append the link to the document body
-      document.body.appendChild(link);
-
-      // Click the link to trigger the download
-      link.click();
-
-      // Remove the link from the document body
-      document.body.removeChild(link);
+      // Upload the file to Firebase Storage
+      fileRef.put(blob).then(() => {
+        console.log('File uploaded successfully!');
+      }).catch(error => {
+        console.error('Error uploading file:', error);
+      });
     });
   </script>
 </body>
